@@ -21,9 +21,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
+      - name: Select latest Xcode
         run: |
-          ls -d /Applications/Xcode*.app 2>/dev/null
           XCODE=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
           echo "Using Xcode: $XCODE"
           sudo xcode-select -s "$XCODE"
@@ -36,28 +35,18 @@ jobs:
       - name: Generate Xcode project
         run: |
           xcodegen generate
-          ls -la VirtualLocation.xcodeproj
 
       - name: Build for iOS Simulator
         run: |
           set -o pipefail
-          if xcodebuild \
+          xcodebuild \
             -project VirtualLocation.xcodeproj \
             -target VirtualLocation \
             -configuration Debug \
             -sdk iphonesimulator \
             SYMROOT=build \
             CODE_SIGNING_ALLOWED=NO \
-            build > build.log 2>&1; then
-            echo "::notice::BUILD OK"
-          else
-            echo "::error::BUILD FAILED. Error lines:"
-            grep -inE "error|fail|cannot|unable|no such|does not exist|damaged|incompat|fatal|xcodebuild:|\.xcodeproj|exit code" build.log | head -20 | while IFS= read -r line; do
-              echo "::error::$line"
-            done
-            echo "::error::END-ERROR-LINES. Total lines: $(wc -l < build.log)"
-            exit 1
-          fi
+            build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
