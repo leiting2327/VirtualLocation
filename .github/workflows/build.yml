@@ -54,11 +54,11 @@ jobs:
             git config user.name "CI"
             git config user.email "ci@example.com"
             git fetch origin ci-log 2>/dev/null || true
-            git checkout -B ci-log 2>/dev/null
+            git checkout -B ci-log 2>/dev/null || true
             cp build.log ci-build.log
             git add -f ci-build.log
-            git commit -m "ci: capture build log" || true
-            git push --force origin ci-log
+            git commit --allow-empty -m "ci: capture build log $(date +%s)" || true
+            git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/leiting2327/VirtualLocation.git" ci-log 2>&1 || echo "PUSH_FAILED"
             exit 1
           fi
 
