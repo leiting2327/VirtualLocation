@@ -50,8 +50,13 @@ jobs:
             build > build.log 2>&1; then
             echo "::notice::BUILD OK"
           else
-            echo "::error::===== BUILD FAILED, tail of build.log ====="
-            tail -50 build.log | while IFS= read -r line; do
+            echo "::error::===== BUILD FAILED ($(wc -l < build.log) lines) ====="
+            echo "::error::--- HEAD 40 ---"
+            head -40 build.log | while IFS= read -r line; do
+              echo "::error::$line"
+            done
+            echo "::error::--- TAIL 40 ---"
+            tail -40 build.log | while IFS= read -r line; do
               echo "::error::$line"
             done
             exit 1
