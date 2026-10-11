@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="VirtualLocation"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+
+  <!--
+    设备级位置模拟（Xcode 使用）：
+    1. 打开 Xcode → 菜单 Product → Scheme → Edit Scheme…；
+    2. 选择 Run → Options → Core Location；
+    3. 勾选 Allow Location Simulation，并在 Default Location 中导入本 GPX 文件；
+    4. 运行 App 时，整台模拟器/设备都会使用该 GPX 中的坐标模拟定位。
+  -->
+
+  <wpt lat="39.9042" lon="116.4074">
+    <name>起点 · 北京天安门</name>
+    <ele>44.0</ele>
+  </wpt>
+
+  <wpt lat="39.9163" lon="116.3972">
+    <name>终点 · 北京故宫</name>
+    <ele>44.0</ele>
+  </wpt>
+
+  <trk>
+    <name>示例模拟路线</name>
+    <trkseg>
+      <trkpt lat="39.9042" lon="116.4074"/>
+      <trkpt lat="39.9060" lon="116.4050"/>
+      <trkpt lat="39.9080" lon="116.4020"/>
+      <trkpt lat="39.9100" lon="116.4005"/>
+      <trkpt lat="39.9120" lon="116.3990"/>
+      <trkpt lat="39.9140" lon="116.3980"/>
+      <trkpt lat="39.9163" lon="116.3972"/>
+    </trkseg>
+  </trk>
+</gpx>
