@@ -50,9 +50,15 @@ jobs:
             build > build.log 2>&1; then
             echo "::notice::BUILD OK"
           else
-            N=$(wc -l < build.log)
-            MSG=$(cat build.log | sed -e 's/%/%25/g' -e 's/\r/%0D/g' -e 's/\n/%0A/g')
-            echo "::error::BUILD FAILED ($N lines):$MSG"
+            echo "::error::BUILD FAILED, pushing build.log to ci-log branch..."
+            git config user.name "CI"
+            git config user.email "ci@example.com"
+            git fetch origin ci-log 2>/dev/null || true
+            git checkout -B ci-log 2>/dev/null
+            cp build.log ci-build.log
+            git add -f ci-build.log
+            git commit -m "ci: capture build log" || true
+            git push --force origin ci-log
             exit 1
           fi
 
