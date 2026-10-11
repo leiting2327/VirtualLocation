@@ -21,9 +21,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 环境信息
+      - name: Select Xcode
         run: |
-          xcode-select -p
+          XCODE=$(ls -d /Applications/Xcode*.app 2>/dev/null | head -1)
+          echo "Using Xcode: $XCODE"
+          sudo xcode-select -s "$XCODE"
           xcodebuild -version
 
       - name: Install XcodeGen
@@ -33,18 +35,27 @@ jobs:
       - name: Generate Xcode project
         run: |
           xcodegen generate
+          ls -la VirtualLocation.xcodeproj
 
       - name: Build for iOS Simulator
         run: |
           set -o pipefail
-          xcodebuild \
+          if xcodebuild \
             -project VirtualLocation.xcodeproj \
             -target VirtualLocation \
             -configuration Debug \
             -sdk iphonesimulator \
             SYMROOT=build \
             CODE_SIGNING_ALLOWED=NO \
-            build
+            build > build.log 2>&1; then
+            echo "::notice::BUILD OK"
+          else
+            echo "::error::===== BUILD FAILED, tail of build.log ====="
+            tail -50 build.log | while IFS= read -r line; do
+              echo "::error::$line"
+            done
+            exit 1
+          fi
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
