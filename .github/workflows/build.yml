@@ -50,15 +50,10 @@ jobs:
             build > build.log 2>&1; then
             echo "::notice::BUILD OK"
           else
-            echo "::error::BUILD FAILED, pushing build.log to ci-log branch..."
-            git config user.name "CI"
-            git config user.email "ci@example.com"
-            git fetch origin ci-log 2>/dev/null || true
-            git checkout -B ci-log 2>/dev/null || true
-            cp build.log ci-build.log
-            git add -f ci-build.log
-            git commit --allow-empty -m "ci: capture build log $(date +%s)" || true
-            git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/leiting2327/VirtualLocation.git" ci-log 2>&1 || echo "PUSH_FAILED"
+            echo "::error::BUILD FAILED, creating issue with build.log..."
+            gh issue create --repo "leiting2327/VirtualLocation" \
+              --title "CI build log $(date +%s)" \
+              --body-file build.log 2>&1 || echo "ISSUE_CREATE_FAILED"
             exit 1
           fi
 
