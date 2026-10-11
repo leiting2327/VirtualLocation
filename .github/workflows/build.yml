@@ -51,10 +51,11 @@ jobs:
             build > build.log 2>&1; then
             echo "::notice::BUILD OK"
           else
-            echo "::error::BUILD FAILED, creating issue with build.log..."
-            gh issue create --repo "leiting2327/VirtualLocation" \
-              --title "CI build log $(date +%s)" \
-              --body-file build.log 2>&1 || echo "ISSUE_CREATE_FAILED"
+            echo "::error::BUILD FAILED. Error lines:"
+            grep -inE "error|fail|cannot|unable|no such|does not exist|damaged|incompat|fatal|xcodebuild:|\.xcodeproj|exit code" build.log | head -20 | while IFS= read -r line; do
+              echo "::error::$line"
+            done
+            echo "::error::END-ERROR-LINES. Total lines: $(wc -l < build.log)"
             exit 1
           fi
 
