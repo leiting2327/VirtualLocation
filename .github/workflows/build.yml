@@ -23,7 +23,8 @@ jobs:
 
       - name: Select Xcode
         run: |
-          XCODE=$(ls -d /Applications/Xcode*.app 2>/dev/null | head -1)
+          ls -d /Applications/Xcode*.app 2>/dev/null
+          XCODE=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
           echo "Using Xcode: $XCODE"
           sudo xcode-select -s "$XCODE"
           xcodebuild -version
