@@ -23,8 +23,8 @@ final class LocationSimulator: ObservableObject {
     private let updateInterval: TimeInterval = 0.5
     private var timer: Timer?
 
-    private var start = CLLocationCoordinate2D()
-    private var end = CLLocationCoordinate2D()
+    private var startCoord = CLLocationCoordinate2D()
+    private var endCoord = CLLocationCoordinate2D()
     private var speedMps: Double = 8.33 // 默认 30 km/h
     private var totalDistance: Double = 0
 
@@ -39,8 +39,8 @@ final class LocationSimulator: ObservableObject {
     /// 在开始前配置路线与速度
     func configure(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D, speedMps: Double) {
         guard !isRunning else { return }
-        self.start = start
-        self.end = end
+        self.startCoord = start
+        self.endCoord = end
         self.speedMps = max(speedMps, 0.1)
         self.totalDistance = start.distance(to: end)
         self.traveledMeters = 0
@@ -59,7 +59,7 @@ final class LocationSimulator: ObservableObject {
     func start() {
         guard !isRunning else { return }
         traveledMeters = 0
-        current = start
+        current = startCoord
         isRunning = true
         emitCurrent()
 
@@ -89,8 +89,8 @@ final class LocationSimulator: ObservableObject {
 
     private func emitCurrent() {
         let fraction = progress
-        let lat = start.latitude + (end.latitude - start.latitude) * fraction
-        let lon = start.longitude + (end.longitude - start.longitude) * fraction
+        let lat = startCoord.latitude + (endCoord.latitude - startCoord.latitude) * fraction
+        let lon = startCoord.longitude + (endCoord.longitude - startCoord.longitude) * fraction
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         current = coord
         onLocation?(coord)
